@@ -1,10 +1,9 @@
 import random
 import time
-from traceback import print_tb
+import colorama
 from colorama import Fore, Style, init
 import os
 clear = lambda: os.system('cls')
-clear()
 
 init(autoreset=True)
 
@@ -85,11 +84,9 @@ class BlackjackGame:
         self.deck = Deck()
         self.players = []
         self.dealer = Player("Dealer", Fore.WHITE)
-        self.colors = [
-            Fore.LIGHTRED_EX, Fore.LIGHTGREEN_EX, Fore.LIGHTBLUE_EX,
+        self.colors = [Fore.LIGHTRED_EX, Fore.LIGHTGREEN_EX, Fore.LIGHTBLUE_EX,
             Fore.LIGHTYELLOW_EX, Fore.LIGHTCYAN_EX, Fore.LIGHTMAGENTA_EX,
-            Fore.GREEN
-        ]
+            Fore.GREEN]
 
     def setup_players(self):
         while True:
@@ -106,8 +103,18 @@ class BlackjackGame:
                 clear()
 
         for i in range(playersnum):
-            player_name = input(f"Enter name for player {i+1}: ")
-            self.players.append(Player(player_name, self.colors[i]))
+            valid = False
+            while not valid:
+                player_name = input(f"Enter name for player {i+1}: ").strip()
+
+                if not player_name or (isinstance(player_name, str) and player_name.startswith("Computer")):
+                   readline = input("Invalid input. Name can't be Null or starts with Computer\nPress any key to continue...")
+                   print()
+                else:
+                    self.players.append(Player(player_name, self.colors[i]))
+                    valid = True
+                  
+                
 
         for i in range(compsnum):
             self.players.append(Player(f"Computer {i+1}", self.colors[playersnum + i]))
@@ -214,7 +221,7 @@ class BlackjackGame:
 
     def play_game(self):
         self.setup_players()
-        print("\nGame Start!")
+        print("\nPreparing Game!")
         self.deck.shuffle_deck()
         print("Distributing cards...", end = "")
         self.distribute_cards()
@@ -226,6 +233,9 @@ class BlackjackGame:
             player.show_hand()
         self.dealer.show_hand(False)
 
+        input("\nPress any key to start the Game!")
+        
+        
         for player in self.players:
             print()
             self.player_turn(player)
